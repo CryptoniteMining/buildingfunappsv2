@@ -1,9 +1,17 @@
+import { getEnsData } from '../../utils/ensUtils';
 
-export async function getEnsData(name) {
-  const response = await fetch(`https://metadata.ens.domains/mainnet/${name}`);
-  if (!response.ok) {
-    throw new Error('Failed to fetch metadata');
+export default async function handler(req, res) {
+  const { name } = req.query;
+
+  if (!name) {
+    return res.status(400).json({ error: 'ENS name is required' });
   }
-  const data = await response.json();
-  return data;
+
+  try {
+    const data = await getEnsData(name);
+    return res.status(200).json(data);
+  } catch (err) {
+    console.error('ENS Fetch Error:', err.message);
+    return res.status(500).json({ error: 'Failed to fetch ENS data' });
+  }
 }
