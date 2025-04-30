@@ -1,10 +1,8 @@
 import { ethers } from 'ethers';
-import { getAvatar, getEnsName } from '@ensdomains/ensjs';
 
 export async function getEnsData(name) {
   const provider = new ethers.JsonRpcProvider('https://eth-mainnet.g.alchemy.com/v2/innCpgwBD8GBgVLWJV1cLq41vhob1He1');
 
- export async function getEnsData(name) {
   if (!name.endsWith('.eth')) {
     throw new Error('Invalid ENS name');
   }
