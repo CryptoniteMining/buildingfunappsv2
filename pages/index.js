@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import FlipCard from '../components/FlipCard';
+import ProfileCard from '../components/ProfileCard';
 
 export default function Home() {
   const [ensName, setEnsName] = useState('');
@@ -27,6 +28,7 @@ export default function Home() {
         }
       `}</style>
 
+      {/* Header */}
       <header className="text-center py-12">
         <h1 className="text-6xl font-extrabold bg-gradient-to-r from-fuchsia-500 via-purple-500 to-rose-500 text-transparent bg-clip-text">
           lookup.xyz
@@ -36,10 +38,11 @@ export default function Home() {
         </p>
       </header>
 
+      {/* ENS Search */}
       <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-xl mx-auto mb-10">
         <input
           type="text"
-          placeholder="Enter an ENS name..."
+          placeholder="Search an ENS name..."
           value={ensName}
           onChange={(e) => setEnsName(e.target.value)}
           className="px-4 py-3 w-full rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-400"
@@ -52,30 +55,20 @@ export default function Home() {
         </button>
       </div>
 
+      {/* Error Message */}
       {error && (
         <div className="text-red-600 text-center font-medium mb-4">{error}</div>
       )}
 
+      {/* ENS Profile Display */}
       {data && (
-        <>
-          <section className="flex flex-col items-center text-center mb-8">
-            {data.avatar && (
-              <img
-                src={data.avatar}
-                alt="ENS Avatar"
-                className="w-24 h-24 rounded-full border-4 border-purple-400 shadow-lg mb-4"
-              />
-            )}
-            <h2 className="text-2xl font-bold text-gray-800">{data.name}</h2>
-            {data.isPrimary && (
-              <p className="text-xs mt-1 text-green-600 font-medium">✅ Primary Name</p>
-            )}
-          </section>
-
+        <section className="flex flex-col items-center gap-6 mt-4">
+          <ProfileCard ensData={data} />
           <FlipCard ensData={data} />
-        </>
+        </section>
       )}
 
+      {/* Footer */}
       <footer className="text-center text-sm text-gray-500 mt-16 mb-6">
         Like this tool? Donate to <a href="https://app.ens.domains/name/wesd.eth" className="underline">wesd.eth</a>
       </footer>
