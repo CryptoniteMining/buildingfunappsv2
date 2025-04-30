@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import FlipCard from '../components/FlipCard';
-import ProfileCard from '../components/ProfileCard';
+import FlipCardWithDetails from '../components/FlipCardWithDetails';
 
 export default function Home() {
   const [ensName, setEnsName] = useState('');
@@ -34,7 +33,10 @@ export default function Home() {
           lookup.xyz
         </h1>
         <p className="mt-3 text-sm text-gray-600">
-          Discover ENS profiles. Built by <a href="https://twitter.com/wesdeth" className="underline">wesd.eth</a>
+          Discover ENS profiles. Built by{' '}
+          <a href="https://twitter.com/wesdeth" className="underline">
+            wesd.eth
+          </a>
         </p>
       </header>
 
@@ -60,17 +62,22 @@ export default function Home() {
         <div className="text-red-600 text-center font-medium mb-4">{error}</div>
       )}
 
-      {/* ENS Profile Display */}
+      {/* ENS Data Display */}
       {data && (
-        <section className="flex flex-col items-center gap-6 mt-4">
-          <ProfileCard ensData={data} />
-          <FlipCard ensData={data} />
+        <section className="flex flex-col items-center gap-8 mt-10 max-w-3xl mx-auto">
+          <FlipCardWithDetails ensData={data} />
         </section>
       )}
 
       {/* Footer */}
       <footer className="text-center text-sm text-gray-500 mt-16 mb-6">
-        Like this tool? Donate to <a href="https://app.ens.domains/name/wesd.eth" className="underline">wesd.eth</a>
+        Like this tool? Donate to{' '}
+        <a
+          href="https://app.ens.domains/name/wesd.eth"
+          className="underline"
+        >
+          wesd.eth
+        </a>
       </footer>
     </main>
   );
