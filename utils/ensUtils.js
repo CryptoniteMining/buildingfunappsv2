@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 
 export async function getEnsData(name) {
-  const provider = new ethers.JsonRpcProvider('https://eth-mainnet.g.alchemy.com/v2/innCpgwBD8GBgVLWJV1cLq41vhob1He1');
+  const provider = new ethers.JsonRpcProvider('https://eth-mainnet.g.alchemy.com/v2/YOUR_ALCHEMY_KEY');
 
   // Resolve ENS name to address
   const address = await provider.resolveName(name);
@@ -9,20 +9,25 @@ export async function getEnsData(name) {
     throw new Error('Could not resolve ENS name');
   }
 
-  // Fetch ENS avatar
+  // Get reverse record for primary name check
+  const reverseName = await provider.lookupAddress(address);
+
+  // Get avatar
   const avatar = await provider.getAvatar(name);
 
-  // Fetch EFP stats
-  const efpResponse = await fetch(`https://api.ethfollow.xyz/api/v1/stats/${address}`);
-  const efpData = await efpResponse.json();
+  // Fetch EFP data
+  const efpUrl = `https://api.ethfollow.xyz/api/v1/stats/${address}`;
+  const efpRes = await fetch(efpUrl);
+  const efpData = efpRes.ok ? await efpRes.json() : { followers: 0, following: 0 };
 
   return {
     name,
     address,
+    isPrimary: reverseName?.toLowerCase() === name.toLowerCase(),
     avatar,
     efp: {
       followers: efpData.followers || 0,
       following: efpData.following || 0,
-    },
+    }
   };
 }
