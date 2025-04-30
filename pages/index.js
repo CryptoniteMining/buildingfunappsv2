@@ -28,13 +28,19 @@ export default function Home() {
   };
 
   const handleLookup = async () => {
+    console.log("🔍 Looking up:", input);
     setLoading(true);
     const provider = new ethers.JsonRpcProvider(process.env.NEXT_PUBLIC_RPC_URL);
     let address = input;
     try {
       if (input.endsWith(".eth")) {
-        address = await provider.resolveName(input);
-        if (!address) throw new Error("ENS name could not be resolved.");
+      address = await provider.resolveName(input);
+      console.log("Resolved address:", address);
+      if (!address) {
+        alert("ENS name could not be resolved. Make sure it exists and is correctly typed.");
+        setLoading(false);
+        return;
+      }
       }
 
       const ensName = await provider.lookupAddress(address);
@@ -71,8 +77,8 @@ export default function Home() {
       setWalletData({ balance, txs: txs.data.result });
       setNfts(nftResult.data.ownedNfts);
     } catch (err) {
-      console.error(err);
-      alert("Something went wrong. Check the ENS name or address.");
+    console.error("❌ Lookup failed:", err);
+    alert("Something went wrong. Check your ENS name, network settings, or environment keys.");
     } finally {
       setLoading(false);
     }
