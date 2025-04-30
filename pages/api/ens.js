@@ -1,5 +1,5 @@
 
-import { getEnsData } from '../../../utils/ensUtils';
+import { getEnsData } from '../../utils/ensUtils';
 
 export default async function handler(req, res) {
   const { name } = req.query;
