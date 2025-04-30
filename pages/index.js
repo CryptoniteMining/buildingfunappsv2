@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import FlipCard from '../components/FlipCard';
 
 export default function Home() {
   const [ensName, setEnsName] = useState('');
@@ -52,11 +53,8 @@ export default function Home() {
       {error && <p className="text-red-500">{error}</p>}
 
       {data && (
-        <div className="bg-white rounded shadow-md p-6 w-full max-w-xl mt-4">
-          <h2 className="text-xl font-semibold mb-2">Results for <span className="text-purple-500">{data.name}</span></h2>
-          <pre className="bg-gray-100 p-4 rounded text-sm overflow-auto">
-            {JSON.stringify(data, null, 2)}
-          </pre>
+        <div className="w-full max-w-xl">
+          <FlipCard ensData={data} />
         </div>
       )}
 
