@@ -1,17 +1,15 @@
-import { getEnsData } from '../../utils/ensUtils';
+import { ethers } from 'ethers';
 
-export default async function handler(req, res) {
-  const { name } = req.query;
+export async function getEnsData(name) {
+  const provider = new ethers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/innCpgwBD8GBgVLWJV1cLq41vhob1He1`);
+  const address = await provider.resolveName(name);
 
-  if (!name) {
-    return res.status(400).json({ error: 'ENS name is required' });
+  if (!address) {
+    throw new Error('Could not resolve ENS name');
   }
 
-  try {
-    const data = await getEnsData(name);
-    return res.status(200).json(data);
-  } catch (err) {
-    console.error('API Fetch Error:', err.message);
-    return res.status(500).json({ error: 'Failed to fetch ENS data' });
-  }
+  return {
+    name,
+    address,
+  };
 }
