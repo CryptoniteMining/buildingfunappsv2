@@ -1,1 +1,25 @@
-// Content for globals.css (placeholder)
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  cursor: url('/cursor.svg'), auto;
+}
+
+@layer utilities {
+  .animate-raindrop {
+    animation: raindrop 0.6s ease-out forwards;
+  }
+
+  @keyframes raindrop {
+    0% {
+      transform: scale(0.2);
+      opacity: 0.9;
+    }
+    100% {
+      transform: scale(1.6);
+      opacity: 0;
+    }
+  }
+}
