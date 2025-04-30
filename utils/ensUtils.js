@@ -1,16 +1,15 @@
-import { getDefaultProvider } from 'ethers';
-import { ENS } from '@ensdomains/ensjs';
-
-const provider = getDefaultProvider('mainnet');
-
-const ens = new ENS({ provider, ensAddress: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e' });
+import { ethers } from 'ethers';
 
 export async function getEnsData(name) {
-  try {
-    const result = await ens.name(name).getAddress();
-    return { name, address: result };
-  } catch (error) {
-    console.error('ENS Lookup Error:', error);
-    throw new Error('Failed to fetch ENS name');
+  const provider = new ethers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/innCpgwBD8GBgVLWJV1cLq41vhob1He1`);
+  const address = await provider.resolveName(name);
+
+  if (!address) {
+    throw new Error('Could not resolve ENS name');
   }
+
+  return {
+    name,
+    address,
+  };
 }
