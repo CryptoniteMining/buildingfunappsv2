@@ -2,18 +2,23 @@ import React from 'react';
 
 export default function FlipCard({ ensData }) {
   return (
-    <div className="perspective w-64 h-40 mx-auto">
-      <div className="relative w-full h-full transition-transform duration-500 transform-style-preserve-3d hover:rotate-y-180">
-        <div className="absolute w-full h-full backface-hidden bg-white border rounded-lg shadow-lg p-4">
-          <h3 className="text-sm font-semibold">ENS Name</h3>
-          <p className="text-xs truncate">{ensData.name}</p>
-          <h3 className="mt-2 text-sm font-semibold">Address</h3>
-          <p className="text-xs truncate">{ensData.address}</p>
-          <p className="mt-4 text-[10px] text-gray-400">Hover to flip</p>
-        </div>
-        <div className="absolute w-full h-full backface-hidden bg-gray-100 border rounded-lg shadow-lg p-4 rotate-y-180">
-          <h3 className="text-sm font-semibold">More Coming Soon</h3>
-          <p className="text-xs text-gray-600">EFP, NFTs, and onchain activity will show here.</p>
+    <div className="w-full max-w-md mx-auto">
+      <div className="relative w-full h-48 perspective">
+        <div className="transition-transform duration-500 transform-style-preserve-3d hover:rotate-y-180 w-full h-full">
+          {/* Front */}
+          <div className="absolute inset-0 backface-hidden bg-white rounded-lg shadow-md p-6 flex flex-col items-center justify-center">
+            <h3 className="text-lg font-bold text-gray-800 mb-2">ENS Name</h3>
+            <p className="text-purple-600 font-semibold">{ensData.name}</p>
+            <p className="text-sm text-gray-500 mt-1">Hover to flip</p>
+          </div>
+
+          {/* Back */}
+          <div className="absolute inset-0 backface-hidden rotate-y-180 bg-white rounded-lg shadow-md p-6 flex flex-col items-center justify-center">
+            <h3 className="text-lg font-bold text-gray-800 mb-2">Address</h3>
+            <p className="text-xs text-center text-gray-600 break-all">
+              {ensData.address}
+            </p>
+          </div>
         </div>
       </div>
     </div>
