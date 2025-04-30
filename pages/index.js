@@ -21,11 +21,11 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-indigo-100 via-pink-100 to-yellow-100 font-sans text-gray-900 px-4">
-     <style jsx global>{`
+      <style jsx global>{`
         body {
           cursor: url('/cursor.svg'), auto;
         }
-      \`}</style>
+      `}</style>
 
       <header className="text-center py-12">
         <h1 className="text-6xl font-extrabold bg-gradient-to-r from-fuchsia-500 via-purple-500 to-rose-500 text-transparent bg-clip-text">
@@ -58,7 +58,6 @@ export default function Home() {
 
       {data && (
         <>
-          {/* Hero ENS display */}
           <section className="flex flex-col items-center text-center mb-8">
             {data.avatar && (
               <img
