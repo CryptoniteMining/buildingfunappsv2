@@ -16,7 +16,7 @@ module.exports = {
   plugins: [
     function ({ addUtilities }) {
       addUtilities({
-       '.perspective': { perspective: '1000px' },
+      '.perspective': { perspective: '1000px' },
       '.preserve-3d': { 'transform-style': 'preserve-3d' },
       '.backface-hidden': { 'backface-visibility': 'hidden' },
       '.rotate-y-180': { transform: 'rotateY(180deg)' },
