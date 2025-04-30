@@ -66,7 +66,21 @@ export default function Home() {
         ltc = await getChainAddress(resolver, 2, 'address.LTC');
         doge = await getChainAddress(resolver, 3, 'address.DOGE');
         sol = await getChainAddress(resolver, 501, 'address.SOL');
-        records = isAdvanced ? await resolver.getTexts(["url", "email", "com.discord"]).catch(() => ({})) : {};
+        if (isAdvanced && resolver) {
+  try {
+    const keys = ["url", "email", "com.discord"];
+    const values = await Promise.all(keys.map(key => resolver.getText(key).catch(() => null)));
+    records = keys.reduce((acc, key, i) => {
+      if (values[i]) acc[key] = values[i];
+      return acc;
+    }, {});
+  } catch (e) {
+    console.warn("⚠️ Failed to get advanced text records:", e);
+    records = {};
+  }
+} else {
+  records = {};
+}
       }
 
       const txs = isAdvanced ? await axios.get(`https://api.etherscan.io/api?module=account&action=txlist&address=${address}&sort=desc&apikey=${process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY}`) : { data: { result: [] } };
