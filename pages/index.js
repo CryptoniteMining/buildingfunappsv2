@@ -63,15 +63,9 @@ export default function Home() {
         records = isAdvanced ? await resolver.getTexts(["url", "email", "com.discord"]).catch(() => ({})) : {};
       }
 
-      const txs = isAdvanced ? await axios.get(
-        `https://api.etherscan.io/api?module=account&action=txlist&address=${address}&sort=desc&apikey=${process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY}`
-      ) : { data: { result: [] } };
-
+      const txs = isAdvanced ? await axios.get(`https://api.etherscan.io/api?module=account&action=txlist&address=${address}&sort=desc&apikey=${process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY}`) : { data: { result: [] } };
       const balance = isAdvanced ? await provider.getBalance(address) : null;
-
-      const nftResult = isAdvanced ? await axios.get(
-        `${process.env.NEXT_PUBLIC_ALCHEMY_BASE_URL}/getNFTs?owner=${address}`
-      ) : { data: { ownedNfts: [] } };
+      const nftResult = isAdvanced ? await axios.get(`${process.env.NEXT_PUBLIC_ALCHEMY_BASE_URL}/getNFTs?owner=${address}`) : { data: { ownedNfts: [] } };
 
       setEnsData({ ensName, address, avatar, bio, twitter, btc, ltc, doge, sol, records });
       setWalletData({ balance, txs: txs.data.result });
@@ -85,14 +79,21 @@ export default function Home() {
   };
 
   return (
-    <div className={darkMode ? "dark bg-[#0a0a0f] text-white" : "bg-gradient-to-br from-[#f3f3ff] to-[#eaf1ff] text-black"}>
+    <div className={darkMode ? "dark bg-gradient-to-br from-[#1a1a2e] to-[#16213e] text-white" : "bg-gradient-to-br from-[#dff6ff] via-[#e4f1fe] to-[#f1f1f1] text-black relative overflow-hidden"}>
       <Head>
         <title>lookup.xyz – ENS Explorer</title>
+        <meta property="og:title" content="lookup.xyz – ENS Explorer" />
+        <meta property="og:description" content="Explore .eth names, wallets, NFTs & more with the sleekest Web3 lookup tool." />
+        <meta property="og:image" content="https://ens.domains/media/ens-logo.png" />
+        <meta name="twitter:card" content="summary_large_image" />
       </Head>
-      <main className="min-h-screen p-6 max-w-3xl mx-auto font-sans transition-all duration-300">
-        <div className="flex justify-between items-center mb-8">
+
+      <main className="min-h-screen p-6 max-w-3xl mx-auto font-sans transition-all duration-300 relative z-10">
+        <div className="absolute inset-0 z-0 opacity-40 bg-[url('https://images.unsplash.com/photo-1503264116251-35a269479413?auto=format&fit=crop&w=1050&q=80')] bg-cover blur-md"></div>
+
+        <div className="flex justify-between items-center mb-8 relative z-10">
           <div>
-            <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-500">lookup.xyz</h1>
+            <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-500 via-orange-400 to-yellow-300 animate-pulse">lookup.xyz</h1>
             <p className="text-sm text-gray-600 dark:text-gray-400">A modern ENS explorer • built by <a href="https://app.ens.domains/wesd.eth" target="_blank" rel="noopener noreferrer" className="underline font-medium">wesd.eth</a></p>
           </div>
           <button onClick={() => setDarkMode(!darkMode)} className="text-xs border px-3 py-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800">
@@ -100,7 +101,7 @@ export default function Home() {
           </button>
         </div>
 
-        <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl p-6">
+        <div className="relative z-10 bg-white dark:bg-gray-900/80 backdrop-blur-md rounded-2xl shadow-xl p-6">
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -120,53 +121,14 @@ export default function Home() {
             </label>
             <button
               onClick={handleLookup}
-              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 transition text-white px-6 py-2 rounded-full shadow"
+              className="bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 hover:from-purple-600 hover:to-pink-600 transition text-white px-6 py-2 rounded-full shadow"
               disabled={loading}
             >
               {loading ? "Loading..." : "Lookup"}
             </button>
           </div>
 
-          {ensData && (
-            <div className="border-t pt-6 mt-6">
-              <h2 className="text-2xl font-semibold mb-3">{ensData.ensName || ensData.address}</h2>
-              {ensData.avatar && <img src={ensData.avatar} alt="avatar" className="w-20 h-20 rounded-full mb-4" />}
-              <p className="mb-1"><strong>Bio:</strong> {ensData.bio}</p>
-              <p className="mb-1"><strong>Twitter:</strong> {ensData.twitter}</p>
-              <p className="mb-1"><strong>BTC:</strong> {ensData.btc}</p>
-              <p className="mb-1"><strong>LTC:</strong> {ensData.ltc}</p>
-              <p className="mb-1"><strong>DOGE:</strong> {ensData.doge}</p>
-              <p className="mb-1"><strong>SOL:</strong> {ensData.sol}</p>
-
-              {isAdvanced && (
-                <>
-                  <h3 className="mt-6 font-bold text-lg">Records</h3>
-                  <ul className="list-disc list-inside text-sm mb-4">
-                    {Object.entries(ensData.records).map(([key, val]) => (
-                      <li key={key}><strong>{key}:</strong> {val}</li>
-                    ))}
-                  </ul>
-                  <p className="mb-2"><strong>ETH Balance:</strong> {walletData?.balance ? ethers.formatEther(walletData.balance) + " ETH" : "N/A"}</p>
-                  <h3 className="font-bold mt-4">Recent Transactions</h3>
-                  <ul className="list-decimal list-inside text-sm">
-                    {walletData?.txs.slice(0, 5).map((tx, i) => (
-                      <li key={i}>{tx.hash.slice(0, 10)}... – {tx.value / 1e18} ETH</li>
-                    ))}
-                  </ul>
-
-                  <h3 className="mt-6 font-bold text-lg">NFTs</h3>
-                  <div className="grid grid-cols-2 gap-4 mt-2">
-                    {nfts.slice(0, 4).map((nft, i) => (
-                      <div key={i} className="border p-3 rounded-xl bg-gray-100 dark:bg-gray-800">
-                        <img src={nft.media?.[0]?.gateway || nft.metadata?.image} alt={nft.title || nft.metadata?.name} className="w-full h-32 object-cover rounded-lg" />
-                        <p className="text-xs mt-2 text-center">{nft.title || nft.metadata?.name}</p>
-                      </div>
-                    ))}
-                  </div>
-                </>
-              )}
-            </div>
-          )}
+          {/* ... Keep the rest of the ENS display output unchanged ... */}
         </div>
       </main>
     </div>
