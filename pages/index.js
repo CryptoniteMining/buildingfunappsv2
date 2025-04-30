@@ -1,64 +1,65 @@
-
-import Head from 'next/head';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 export default function Home() {
-  const [input, setInput] = useState('');
-  const [clicks, setClicks] = useState([]);
+  const [ensName, setEnsName] = useState('');
+  const [ensData, setEnsData] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const handleClick = (e) => {
-      const newDrop = {
-        x: e.clientX,
-        y: e.clientY,
-        id: Date.now(),
-      };
-      setClicks((prev) => [...prev.slice(-10), newDrop]);
-      setTimeout(() => {
-        setClicks((prev) => prev.filter((drop) => drop.id !== newDrop.id));
-      }, 800);
-    };
+  const handleSearch = async () => {
+    if (!ensName) return;
 
-    window.addEventListener('click', handleClick);
-    return () => window.removeEventListener('click', handleClick);
-  }, []);
+    setLoading(true);
+    setError(null);
+    setEnsData(null);
+
+    try {
+      const response = await fetch(`/api/ens?name=${ensName}`);
+      if (!response.ok) throw new Error('Failed to fetch ENS data');
+      const data = await response.json();
+      setEnsData(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-b from-blue-100 via-white to-purple-100 font-sans text-gray-900 overflow-hidden">
-      <Head>
-        <title>lookup.xyz 🌈</title>
-      </Head>
-
-      {clicks.map((drop) => (
-        <div
-          key={drop.id}
-          className="absolute w-6 h-6 rounded-full bg-blue-400 opacity-70 animate-ping pointer-events-none"
-          style={{ top: drop.y, left: drop.x, transform: 'translate(-50%, -50%)' }}
-        />
-      ))}
-
-      <main className="flex flex-col items-center justify-center py-20 px-4 text-center">
-        <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500 mb-4">
-          lookup.xyz
-        </h1>
-        <p className="mb-6 text-gray-600">A modern ENS explorer • built by <a href="https://twitter.com/wesd_eth" className="underline">wesd.eth</a></p>
-
+    <div className="min-h-screen bg-gradient-to-b from-blue-100 to-purple-100 flex flex-col items-center justify-center px-4 text-center">
+      <h1 className="text-4xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-yellow-500 mb-4">
+        lookup.xyz
+      </h1>
+      <p className="mb-8 text-gray-700">A modern ENS explorer • built by <a className="underline" href="https://app.ens.domains/name/wesd.eth">wesd.eth</a></p>
+      
+      <div className="flex flex-col sm:flex-row items-center gap-4">
         <input
           type="text"
-          placeholder="Search ENS name e.g. vitalik.eth"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          className="px-4 py-3 rounded-xl w-full max-w-md border border-gray-300 shadow-sm focus:ring-2 focus:ring-purple-400 focus:outline-none text-center"
+          placeholder="Enter ENS name..."
+          value={ensName}
+          onChange={(e) => setEnsName(e.target.value)}
+          className="px-4 py-2 rounded shadow w-72 sm:w-96 border border-gray-300"
         />
-        <button className="mt-4 px-6 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transition">
+        <button
+          onClick={handleSearch}
+          className="bg-purple-500 hover:bg-purple-600 text-white px-6 py-2 rounded font-medium"
+        >
           Search
         </button>
+      </div>
 
-        <footer className="mt-16 text-sm text-gray-500">
-          Like this tool? Donate to <code>wesd.eth</code>
-        </footer>
-      </main>
+      {loading && <p className="mt-6">Loading...</p>}
+      {error && <p className="mt-6 text-red-600">{error}</p>}
+      {ensData && (
+        <div className="mt-10 bg-white rounded-lg shadow-lg p-6 w-full max-w-2xl text-left">
+          <h2 className="text-xl font-bold mb-4">Results for {ensName}</h2>
+          <pre className="text-sm whitespace-pre-wrap">{JSON.stringify(ensData, null, 2)}</pre>
+        </div>
+      )}
+
+      <footer className="mt-12 text-sm text-gray-500">
+        Like this tool? Donate to <a href="https://app.ens.domains/name/wesd.eth" className="underline">wesd.eth</a>
+      </footer>
     </div>
   );
 }
-
