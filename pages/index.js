@@ -88,8 +88,26 @@ export default function Home() {
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
 
-      <main className="min-h-screen p-6 max-w-3xl mx-auto font-sans transition-all duration-300 relative z-10">
-        <div className="absolute inset-0 z-0 opacity-40 bg-[url('https://images.unsplash.com/photo-1503264116251-35a269479413?auto=format&fit=crop&w=1050&q=80')] bg-cover blur-md"></div>
+      <main className="min-h-screen p-6 max-w-3xl mx-auto font-sans transition-all duration-300 relative z-10 overflow-visible">
+        <div className="absolute inset-0 z-0 bg-gradient-to-br from-sky-200 via-white to-sky-300 blur-sm"></div>
+        <div className="absolute left-[-100px] top-20 text-6xl font-black text-blue-400/30 select-none animate-float">ENS</div>
+        <div className="absolute right-[-100px] top-60 text-6xl font-black text-purple-400/30 select-none animate-float-slow">ENS</div>
+        <style jsx>{`
+          @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(15px); }
+          }
+          @keyframes float-slow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(30px); }
+          }
+          .animate-float {
+            animation: float 6s ease-in-out infinite;
+          }
+          .animate-float-slow {
+            animation: float-slow 8s ease-in-out infinite;
+          }
+        `}</style>
 
         <div className="flex justify-between items-center mb-8 relative z-10">
           <div>
