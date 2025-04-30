@@ -59,13 +59,17 @@ export default function Home() {
       }
 
       if (resolver) {
-        avatar = await resolver.getText("avatar").catch(() => null);
+  try {
+    avatar = await resolver.getText("avatar").catch(() => null);
         bio = await resolver.getText("description").catch(() => null);
         twitter = await resolver.getText("com.twitter").catch(() => null);
         btc = await getChainAddress(resolver, 0, 'address.BTC');
         ltc = await getChainAddress(resolver, 2, 'address.LTC');
         doge = await getChainAddress(resolver, 3, 'address.DOGE');
         sol = await getChainAddress(resolver, 501, 'address.SOL');
+  } catch (e) {
+    console.warn("Resolver exists but failed to fetch some records:", e);
+  }
         if (isAdvanced && resolver) {
   try {
     const keys = ["url", "email", "com.discord"];
