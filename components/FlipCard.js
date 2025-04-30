@@ -2,23 +2,19 @@ import React from 'react';
 
 export default function FlipCard({ ensData }) {
   return (
-    <div className="w-full max-w-md mx-auto">
-      <div className="relative w-full h-48 perspective">
-        <div className="transition-transform duration-500 preserve-3d hover:rotate-y-180 w-full h-full">
-          {/* Front Side */}
-          <div className="absolute inset-0 backface-hidden bg-white rounded-lg shadow-md p-6 flex flex-col items-center justify-center">
-            <h3 className="text-lg font-bold text-gray-800 mb-2">ENS Name</h3>
-            <p className="text-purple-600 font-semibold">{ensData.name}</p>
-            <p className="text-sm text-gray-500 mt-1">Hover to flip</p>
-          </div>
+    <div className="relative w-full max-w-xs h-48 perspective mx-auto">
+      <div className="relative w-full h-full preserve-3d transition-transform duration-700 hover:rotate-y-180">
+        {/* Front */}
+        <div className="absolute inset-0 backface-hidden bg-white rounded-lg shadow p-6 flex flex-col items-center justify-center">
+          <h3 className="text-md font-bold text-purple-600 mb-1">ENS Name</h3>
+          <p className="text-lg font-semibold">{ensData.name}</p>
+          <p className="text-xs text-gray-400 mt-2">Hover to flip for address</p>
+        </div>
 
-          {/* Back Side */}
-          <div className="absolute inset-0 backface-hidden rotate-y-180 bg-white rounded-lg shadow-md p-6 flex flex-col items-center justify-center">
-            <h3 className="text-lg font-bold text-gray-800 mb-2">Address</h3>
-            <p className="text-xs text-center text-gray-600 break-words">
-              {ensData.address}
-            </p>
-          </div>
+        {/* Back */}
+        <div className="absolute inset-0 backface-hidden rotate-y-180 bg-white rounded-lg shadow p-6 flex flex-col items-center justify-center">
+          <h3 className="text-md font-bold text-purple-600 mb-1">Address</h3>
+          <p className="text-xs text-gray-700 text-center break-words">{ensData.address}</p>
         </div>
       </div>
     </div>
