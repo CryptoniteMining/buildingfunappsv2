@@ -1,17 +1,16 @@
-import { getEnsData } from '../../utils/ensUtils';
+import { getDefaultProvider } from 'ethers';
+import { ENS } from '@ensdomains/ensjs';
 
-export default async function handler(req, res) {
-  const { name } = req.query;
+const provider = getDefaultProvider('mainnet');
 
-  if (!name) {
-    return res.status(400).json({ error: 'ENS name is required' });
-  }
+const ens = new ENS({ provider, ensAddress: '0x00000000000C2E074eC69A0dFb2997BA6C7d2e1e' });
 
+export async function getEnsData(name) {
   try {
-    const data = await getEnsData(name);
-    return res.status(200).json(data);
-  } catch (err) {
-    console.error('ENS Fetch Error:', err.message);
-    return res.status(500).json({ error: 'Failed to fetch ENS data' });
+    const result = await ens.name(name).getAddress();
+    return { name, address: result };
+  } catch (error) {
+    console.error('ENS Lookup Error:', error);
+    throw new Error('Failed to fetch ENS name');
   }
 }
