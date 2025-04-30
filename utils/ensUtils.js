@@ -12,10 +12,19 @@ export async function getEnsData(name) {
     throw new Error('Could not resolve ENS name');
   }
 
-  const resolver = await provider.getResolver(name);
-  const avatar = resolver ? await resolver.getText('avatar') : null;
+  let bioData = {};
+  try {
+    const res = await fetch(`https://api.web3.bio/profile/${name}`);
+    if (res.ok) {
+      const json = await res.json();
+      bioData = json?.data || {};
+    }
+  } catch (e) {
+    console.error('Web3.bio fetch failed:', e.message);
+  }
 
-  const records = {};
+  const resolver = await provider.getResolver(name);
+  const fallbackRecords = {};
   if (resolver) {
     const keys = [
       'avatar',
@@ -32,17 +41,23 @@ export async function getEnsData(name) {
     for (const key of keys) {
       try {
         const val = await resolver.getText(key);
-        if (val) records[key] = val;
+        if (val) fallbackRecords[key] = val;
       } catch (e) {
         continue;
       }
     }
   }
 
+  const avatar =
+    bioData.avatar || fallbackRecords.avatar || null;
+
+  const records = bioData.records?.length
+    ? Object.fromEntries(bioData.records.map(({ key, value }) => [key, value]))
+    : fallbackRecords;
+
   const primary = await provider.lookupAddress(address);
   const isPrimary = primary === name;
 
-  // Ethereum Follow Protocol data
   let efp = {};
   try {
     const efpRes = await fetch(`https://api.ethfollow.xyz/api/v1/stats/${address}`);
@@ -53,8 +68,7 @@ export async function getEnsData(name) {
     efp = {};
   }
 
-  // Placeholder for POAPs (future enhancement)
-  const poaps = []; // To be filled using POAP API later
+  const poaps = []; // placeholder
 
   return {
     name,
