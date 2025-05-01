@@ -19,36 +19,39 @@ export async function getEnsData(name) {
   const reverseName = await provider.lookupAddress(address);
   const isPrimary = reverseName?.toLowerCase() === name.toLowerCase();
 
-  // Enhancements
   let records = {};
   let socials = [];
   let efp = null;
   let poaps = [];
+  let nfts = [];
 
-  // Web3.bio fetch
   try {
     const res = await fetch(`https://api.web3.bio/profile/${name}`);
     const json = await res.json();
-    const ens = json?.data?.ens_domain;
 
-    if (ens) {
-      records = ens.records || {};
-      socials = ens.identity?.socials || [];
+    const profile = json?.data?.ens_domain;
+
+    if (profile) {
+      records = profile.records || {};
+      socials = profile.identity?.socials || [];
 
       efp = {
-        followers: ens.identity?.followerCount ?? null,
-        following: ens.identity?.followingCount ?? null,
-        followersList: ens.identity?.followersList || [],
-        followingList: ens.identity?.followingList || [],
+        followers: profile.identity?.followerCount ?? 0,
+        following: profile.identity?.followingCount ?? 0,
+        followersList: profile.identity?.followersList || [],
+        followingList: profile.identity?.followingList || [],
       };
+
+      nfts = profile.nfts || [];
     }
   } catch (error) {
     console.warn('Web3.bio fetch failed:', error.message);
   }
 
-  // POAP fetch
   try {
-    const poapRes = await fetch(`https://public-api.poap.tech/actions/scan/${address}`);
+    const poapRes = await fetch(`https://public-api.poap.tech/actions/scan/${address}`, {
+      headers: { 'X-API-Key': 'ENS Explorer' }
+    });
     if (poapRes.ok) {
       poaps = await poapRes.json();
     }
@@ -65,5 +68,6 @@ export async function getEnsData(name) {
     socials,
     efp,
     poaps,
+    nfts,
   };
 }
