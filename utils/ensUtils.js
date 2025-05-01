@@ -1,57 +1,48 @@
 import { ethers } from 'ethers';
 
-const ALCHEMY_MAINNET_RPC = 'https://eth-mainnet.g.alchemy.com/v2/innCpgwBD8GBgVLWJV1cLq41vhob1He1';
-const provider = new ethers.JsonRpcProvider(ALCHEMY_MAINNET_RPC);
+// Replace with your Alchemy key
+const ALCHEMY_KEY = 'innCpgwBD8GBgVLWJV1cLq41vhob1He1';
+const provider = new ethers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`);
 
 export async function getEnsData(name) {
-  if (!name.endsWith('.eth')) throw new Error('Invalid ENS name');
-
-  const address = await provider.resolveName(name);
-  if (!address) throw new Error('Could not resolve ENS name');
-
-  const resolver = await provider.getResolver(name);
-  const avatar = resolver ? await resolver.getText('avatar').catch(() => null) : null;
-  const primary = await provider.lookupAddress(address);
-  const isPrimary = primary === name;
-
-  // ENS Records
-  let records = {};
-  if (resolver) {
-    const keys = ['avatar', 'url', 'description', 'com.twitter', 'com.github', 'org.telegram', 'keywords'];
-    await Promise.all(
-      keys.map(async (key) => {
-        try {
-          const value = await resolver.getText(key);
-          if (value) records[key] = value;
-        } catch (_) {}
-      })
-    );
+  if (!name.endsWith('.eth')) {
+    throw new Error('Invalid ENS name');
   }
 
-  // Web3.bio fallback
-  let efp = {};
-  try {
-    const web3bioRes = await fetch(`https://api.web3.bio/profile/${name}`);
-    const web3bioJson = await web3bioRes.json();
-    if (web3bioJson?.data?.profile) {
-      if (!avatar && web3bioJson.data.profile.avatar) records.avatar = web3bioJson.data.profile.avatar;
-      if (!records["com.twitter"] && web3bioJson.data.profile.twitter) {
-        records["com.twitter"] = web3bioJson.data.profile.twitter;
-      }
-      if (!records["com.github"] && web3bioJson.data.profile.github) {
-        records["com.github"] = web3bioJson.data.profile.github;
-      }
-    }
+  // Core ENS resolution
+  const address = await provider.resolveName(name);
+  if (!address) {
+    throw new Error('Could not resolve ENS name');
+  }
 
-    // Add Ethereum Follow Protocol info
-    if (web3bioJson?.data?.ens?.ens_follow) {
+  const resolver = await provider.getResolver(name);
+  const avatar = resolver ? await resolver.getText('avatar') : null;
+
+  const reverseName = await provider.lookupAddress(address);
+  const isPrimary = reverseName?.toLowerCase() === name.toLowerCase();
+
+  // Web3.bio enhancement
+  let records = {};
+  let socials = [];
+  let efp = null;
+
+  try {
+    const res = await fetch(`https://api.web3.bio/profile/${name}`);
+    const json = await res.json();
+
+    const ens = json?.data?.ens_domain;
+
+    if (ens) {
+      records = ens.records || {};
+      socials = ens.identity?.socials || [];
+
       efp = {
-        followers: web3bioJson.data.ens.ens_follow.follower_count,
-        following: web3bioJson.data.ens.ens_follow.following_count,
+        followers: ens.identity?.followerCount ?? null,
+        following: ens.identity?.followingCount ?? null
       };
     }
-  } catch (e) {
-    console.error('Web3.bio fallback failed:', e);
+  } catch (error) {
+    console.warn('Web3.bio fetch failed:', error.message);
   }
 
   return {
@@ -60,6 +51,7 @@ export async function getEnsData(name) {
     avatar,
     isPrimary,
     records,
-    efp,
+    socials,
+    efp
   };
 }
