@@ -1,51 +1,57 @@
 import React, { useState } from 'react';
 
 export default function FlipCardWithDetails({ ensData }) {
-  const { name, address, avatar, isPrimary, records = {}, efp = {} } = ensData;
+  const { name, address, avatar, isPrimary, records, efp } = ensData;
   const [flipped, setFlipped] = useState(false);
 
   return (
     <div className="w-full max-w-5xl flex flex-col gap-10 mx-auto px-4">
-      {/* Profile Header */}
       <div className="bg-white rounded-xl shadow-md p-6 text-center flex flex-col items-center">
         {avatar && (
-          <img src={avatar} alt="ENS Avatar" className="w-24 h-24 rounded-full border-4 border-purple-400 shadow-md mb-4" />
+          <img
+            src={avatar}
+            alt="ENS Avatar"
+            className="w-24 h-24 rounded-full border-4 border-purple-400 shadow-md mb-4"
+          />
         )}
         <h2 className="text-2xl font-bold text-gray-800">{name}</h2>
         {isPrimary && <p className="text-xs text-green-600 font-medium mt-1">✅ Primary Name</p>}
         <p className="text-sm text-gray-500 mt-2 break-all">{address}</p>
       </div>
 
-      {/* Records + Flip Card */}
       <div className="grid md:grid-cols-2 gap-6">
-        {/* Click-to-Flip Card */}
         <div className="w-full flex justify-center">
-          <div
-            className="w-[350px] h-[200px] relative cursor-pointer"
-            style={{ perspective: '1200px' }}
-            onClick={() => setFlipped(!flipped)}
-          >
+          <div className="w-[350px] h-[200px] relative" style={{ perspective: '1200px' }}>
             <div
               className="w-full h-full transition-transform duration-700 ease-in-out relative"
               style={{
                 transformStyle: 'preserve-3d',
                 transform: flipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
               }}
+              onClick={() => setFlipped(!flipped)}
             >
-              <div className="absolute inset-0 bg-white rounded-2xl shadow-xl flex flex-col justify-center items-center text-center px-4" style={{ backfaceVisibility: 'hidden' }}>
+              <div
+                className="absolute inset-0 bg-white rounded-2xl shadow-xl flex flex-col justify-center items-center text-center px-4"
+                style={{ backfaceVisibility: 'hidden' }}
+              >
                 <h3 className="text-lg font-semibold text-purple-600">ENS Name</h3>
                 <p className="text-xl font-bold text-gray-800 mt-2">{name}</p>
                 <span className="text-xs text-gray-400 mt-4">Click to reveal wallet address</span>
               </div>
-              <div className="absolute inset-0 bg-purple-100 rounded-2xl shadow-xl flex flex-col justify-center items-center text-center px-4" style={{ transform: 'rotateY(180deg)', backfaceVisibility: 'hidden' }}>
-                <h3 className="text-lg font-semibold text-purple-700">Wallet Address</h3>
-                <p className="text-sm break-all text-gray-700 mt-2">{address}</p>
+              <div
+                className="absolute inset-0 bg-purple-100 rounded-2xl shadow-xl flex flex-col justify-center items-center text-center px-4"
+                style={{
+                  transform: 'rotateY(180deg)',
+                  backfaceVisibility: 'hidden',
+                }}
+              >
+                <h3 className="text-lg font-semibold text-purple-700">Address</h3>
+                <p className="text-sm break-words text-gray-700 mt-2">{address}</p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* ENS Text Records */}
         <div className="bg-white rounded-xl shadow-md p-4">
           <h4 className="text-lg font-semibold mb-3 text-gray-800">ENS Records</h4>
           {records && Object.keys(records).length > 0 ? (
@@ -60,31 +66,28 @@ export default function FlipCardWithDetails({ ensData }) {
         </div>
       </div>
 
-      {/* Socials & EFP */}
       <div className="grid md:grid-cols-2 gap-6">
-        {/* Social Links */}
         <div className="bg-white rounded-xl shadow-md p-4">
           <h4 className="text-lg font-semibold mb-3 text-gray-800">Social Links</h4>
           <ul className="space-y-2 text-sm text-blue-600">
-            {records["com.twitter"] && (
-              <li><a href={`https://twitter.com/${records["com.twitter"]}`} target="_blank" rel="noreferrer">@{records["com.twitter"]}</a></li>
+            {records?.["com.twitter"] && (
+              <li><a href={`https://twitter.com/${records["com.twitter"]}`} target="_blank">@{records["com.twitter"]}</a></li>
             )}
-            {records["com.github"] && (
-              <li><a href={`https://github.com/${records["com.github"]}`} target="_blank" rel="noreferrer">@{records["com.github"]}</a></li>
+            {records?.["com.github"] && (
+              <li><a href={`https://github.com/${records["com.github"]}`} target="_blank">@{records["com.github"]}</a></li>
             )}
-            {records["org.telegram"] && (
-              <li><a href={`https://t.me/${records["org.telegram"]}`} target="_blank" rel="noreferrer">@{records["org.telegram"]}</a></li>
+            {records?.["org.telegram"] && (
+              <li><a href={`https://t.me/${records["org.telegram"]}`} target="_blank">@{records["org.telegram"]}</a></li>
             )}
           </ul>
-          {!records["com.twitter"] && !records["com.github"] && !records["org.telegram"] && (
+          {!(records?.["com.twitter"] || records?.["com.github"] || records?.["org.telegram"]) && (
             <p className="text-sm text-gray-500">No connected social handles.</p>
           )}
         </div>
 
-        {/* Ethereum Follow Protocol */}
         <div className="bg-white rounded-xl shadow-md p-4">
           <h4 className="text-lg font-semibold mb-3 text-gray-800">Ethereum Follow Protocol</h4>
-          {efp && efp.followers !== undefined ? (
+          {efp?.followers !== undefined ? (
             <ul className="text-sm text-gray-700">
               <li><strong>Followers:</strong> {efp.followers}</li>
               <li><strong>Following:</strong> {efp.following}</li>
@@ -95,7 +98,6 @@ export default function FlipCardWithDetails({ ensData }) {
         </div>
       </div>
 
-      {/* POAPs Placeholder */}
       <div className="bg-white rounded-xl shadow-md p-4 mt-4 text-center">
         <h4 className="text-lg font-semibold mb-2 text-gray-800">POAPs</h4>
         <p className="text-sm text-gray-500">POAPs display coming soon...</p>
