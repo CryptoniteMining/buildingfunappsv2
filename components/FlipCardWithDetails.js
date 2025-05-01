@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import EFPGrid from './EFPGrid';
+import SocialCards from './SocialCards';
 
 export default function FlipCardWithDetails({ ensData }) {
   const { name, address, avatar, isPrimary, records, efp, nfts } = ensData;
@@ -75,52 +77,16 @@ export default function FlipCardWithDetails({ ensData }) {
         </div>
       </div>
 
-      {/* Socials & EFP */}
-      <div className="grid md:grid-cols-2 gap-6">
-        {/* Social Links */}
-        <div className="bg-white rounded-xl shadow-md p-4">
-          <h4 className="text-lg font-semibold mb-3 text-gray-800">Social Links</h4>
-          <ul className="space-y-2 text-sm text-blue-600">
-            {records?.["com.twitter"] && (
-              <li>
-                <a href={`https://twitter.com/${records["com.twitter"]}`} target="_blank" rel="noreferrer">
-                  @{records["com.twitter"]}
-                </a>
-              </li>
-            )}
-            {records?.["com.github"] && (
-              <li>
-                <a href={`https://github.com/${records["com.github"]}`} target="_blank" rel="noreferrer">
-                  @{records["com.github"]}
-                </a>
-              </li>
-            )}
-            {records?.["org.telegram"] && (
-              <li>
-                <a href={`https://t.me/${records["org.telegram"]}`} target="_blank" rel="noreferrer">
-                  @{records["org.telegram"]}
-                </a>
-              </li>
-            )}
-          </ul>
-          {!(records?.["com.twitter"] || records?.["com.github"] || records?.["org.telegram"]) && (
-            <p className="text-sm text-gray-500">No connected social handles.</p>
-          )}
-        </div>
+      {/* Social Cards */}
+      <SocialCards socials={{
+        twitter: records?.["com.twitter"],
+        github: records?.["com.github"],
+        telegram: records?.["org.telegram"],
+        farcaster: records?.["org.farcaster"],
+      }} />
 
-        {/* EFP Data */}
-        <div className="bg-white rounded-xl shadow-md p-4">
-          <h4 className="text-lg font-semibold mb-3 text-gray-800">Ethereum Follow Protocol</h4>
-          {efp?.followers !== undefined ? (
-            <ul className="text-sm text-gray-700">
-              <li><strong>Followers:</strong> {efp.followers}</li>
-              <li><strong>Following:</strong> {efp.following}</li>
-            </ul>
-          ) : (
-            <p className="text-sm text-gray-500">No EFP data available.</p>
-          )}
-        </div>
-      </div>
+      {/* EFP Grid */}
+      <EFPGrid efp={efp} />
 
       {/* NFTs */}
       <div className="bg-white rounded-xl shadow-md p-4 mt-4">
