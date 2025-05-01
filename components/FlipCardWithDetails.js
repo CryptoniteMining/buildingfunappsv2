@@ -4,20 +4,11 @@ import SocialCards from './SocialCards';
 import PoapGrid from './PoapGrid';
 
 export default function FlipCardWithDetails({ ensData }) {
-  const {
-    name,
-    address,
-    avatar,
-    isPrimary,
-    records,
-    efp,
-    nfts,
-    poaps,
-  } = ensData;
+  const { name, address, avatar, isPrimary, records, efp, nfts, poaps } = ensData;
   const [flipped, setFlipped] = useState(false);
 
   return (
-    <div className="w-full max-w-5xl flex flex-col gap-10 mx-auto px-4">
+    <div className="w-full max-w-6xl flex flex-col gap-10 mx-auto px-4 py-6">
 
       {/* Profile Header */}
       <div className="bg-white rounded-xl shadow-md p-6 text-center flex flex-col items-center">
@@ -30,19 +21,16 @@ export default function FlipCardWithDetails({ ensData }) {
         )}
         <h2 className="text-2xl font-bold text-gray-800">{name}</h2>
         {isPrimary && (
-          <p className="text-xs text-green-600 font-medium mt-1">
-            ✅ Primary Name
-          </p>
+          <p className="text-xs text-green-600 font-medium mt-1">✅ Primary Name</p>
         )}
         <p className="text-sm text-gray-500 mt-2 break-all">{address}</p>
       </div>
 
-      {/* Flip Card + Records */}
+      {/* Flip Card & Records */}
       <div className="grid md:grid-cols-2 gap-6">
-        {/* Flip Card */}
-        <div className="w-full flex justify-center">
+        <div className="flex justify-center">
           <div
-            className="w-[350px] h-[200px] relative cursor-pointer"
+            className="w-full max-w-xs h-[200px] relative cursor-pointer"
             style={{ perspective: '1200px' }}
             onClick={() => setFlipped(!flipped)}
           >
@@ -58,13 +46,9 @@ export default function FlipCardWithDetails({ ensData }) {
                 className="absolute inset-0 bg-white rounded-2xl shadow-xl flex flex-col justify-center items-center text-center px-4"
                 style={{ backfaceVisibility: 'hidden' }}
               >
-                <h3 className="text-lg font-semibold text-purple-600">
-                  ENS Name
-                </h3>
+                <h3 className="text-lg font-semibold text-purple-600">ENS Name</h3>
                 <p className="text-xl font-bold text-gray-800 mt-2">{name}</p>
-                <span className="text-xs text-gray-400 mt-4">
-                  Click to reveal wallet address
-                </span>
+                <span className="text-xs text-gray-400 mt-4">Click to reveal wallet address</span>
               </div>
 
               {/* Back */}
@@ -75,12 +59,8 @@ export default function FlipCardWithDetails({ ensData }) {
                   backfaceVisibility: 'hidden',
                 }}
               >
-                <h3 className="text-lg font-semibold text-purple-700">
-                  Address
-                </h3>
-                <p className="text-sm break-words text-gray-700 mt-2">
-                  {address}
-                </p>
+                <h3 className="text-lg font-semibold text-purple-700">Address</h3>
+                <p className="text-sm break-words text-gray-700 mt-2">{address}</p>
               </div>
             </div>
           </div>
@@ -88,15 +68,11 @@ export default function FlipCardWithDetails({ ensData }) {
 
         {/* ENS Records */}
         <div className="bg-white rounded-xl shadow-md p-4">
-          <h4 className="text-lg font-semibold mb-3 text-gray-800">
-            ENS Records
-          </h4>
+          <h4 className="text-lg font-semibold mb-3 text-gray-800">ENS Records</h4>
           {records && Object.keys(records).length > 0 ? (
             <ul className="text-sm text-gray-700 space-y-2">
               {Object.entries(records).map(([key, val]) => (
-                <li key={key}>
-                  <strong>{key}:</strong> {val}
-                </li>
+                <li key={key}><strong>{key}:</strong> {val}</li>
               ))}
             </ul>
           ) : (
@@ -105,17 +81,15 @@ export default function FlipCardWithDetails({ ensData }) {
         </div>
       </div>
 
-      {/* Social Media Cards */}
-      <SocialCards
-        socials={{
-          twitter: records?.['com.twitter'],
-          github: records?.['com.github'],
-          telegram: records?.['org.telegram'],
-          farcaster: records?.['org.farcaster'],
-        }}
-      />
+      {/* Social Cards */}
+      <SocialCards socials={{
+        twitter: records?.["com.twitter"],
+        github: records?.["com.github"],
+        telegram: records?.["org.telegram"],
+        farcaster: records?.["org.farcaster"],
+      }} />
 
-      {/* EFP Followers/Following Avatars */}
+      {/* EFP Grid */}
       <EFPGrid efp={efp} />
 
       {/* NFTs */}
