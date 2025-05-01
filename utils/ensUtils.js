@@ -27,23 +27,25 @@ export async function getEnsData(name) {
   let efp = null;
 
   try {
-    const res = await fetch(`https://api.web3.bio/profile/${name}`);
-    const json = await res.json();
+  const res = await fetch(`https://api.web3.bio/profile/${name}`);
+  const json = await res.json();
 
-    const ens = json?.data?.ens_domain;
+  const ens = json?.data?.ens_domain;
 
-    if (ens) {
-      records = ens.records || {};
-      socials = ens.identity?.socials || [];
+  if (ens) {
+    records = ens.records || {};
+    socials = ens.identity?.socials || [];
 
-      efp = {
-        followers: ens.identity?.followerCount ?? null,
-        following: ens.identity?.followingCount ?? null
-      };
-    }
-  } catch (error) {
-    console.warn('Web3.bio fetch failed:', error.message);
+    efp = {
+      followers: ens.identity?.followerCount ?? null,
+      following: ens.identity?.followingCount ?? null,
+      followersList: ens.identity?.followersList || [],
+      followingList: ens.identity?.followingList || [],
+    };
   }
+} catch (error) {
+  console.warn('Web3.bio fetch failed:', error.message);
+}
 
   return {
     name,
