@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 export default function FlipCardWithDetails({ ensData }) {
   const { name, address, avatar, isPrimary, records, efp } = ensData;
+
   const [flipped, setFlipped] = useState(false);
 
   return (
@@ -9,11 +10,7 @@ export default function FlipCardWithDetails({ ensData }) {
       {/* Profile Header */}
       <div className="bg-white rounded-xl shadow-md p-6 text-center flex flex-col items-center">
         {avatar && (
-          <img
-            src={avatar}
-            alt="ENS Avatar"
-            className="w-24 h-24 rounded-full border-4 border-purple-400 shadow-md mb-4"
-          />
+          <img src={avatar} alt="ENS Avatar" className="w-24 h-24 rounded-full border-4 border-purple-400 shadow-md mb-4" />
         )}
         <h2 className="text-2xl font-bold text-gray-800">{name}</h2>
         {isPrimary && (
@@ -47,7 +44,6 @@ export default function FlipCardWithDetails({ ensData }) {
                 <p className="text-xl font-bold text-gray-800 mt-2">{name}</p>
                 <span className="text-xs text-gray-400 mt-4">Click to flip for address</span>
               </div>
-
               {/* Back */}
               <div
                 className="absolute inset-0 bg-purple-100 rounded-2xl shadow-xl flex flex-col justify-center items-center text-center px-4"
@@ -64,7 +60,7 @@ export default function FlipCardWithDetails({ ensData }) {
           </div>
         </div>
 
-        {/* Text Records */}
+        {/* ENS Records */}
         <div className="bg-white rounded-xl shadow-md p-4">
           <h4 className="text-lg font-semibold mb-3 text-gray-800">ENS Records</h4>
           {records && Object.keys(records).length > 0 ? (
@@ -88,45 +84,48 @@ export default function FlipCardWithDetails({ ensData }) {
             {records?.["com.twitter"] && (
               <li>
                 <a
-                  href={`https://twitter.com/${records["com.twitter"]}`}
+                  href={`https://x.com/${records["com.twitter"]}`}
                   target="_blank"
                   rel="noreferrer"
+                  className="hover:underline"
                 >
-                  @{records["com.twitter"]}
+                  🐦 @{records["com.twitter"]}
                 </a>
               </li>
             )}
-            {records?.["com.github"] && (
+            {records?.["com.farcaster"] && (
               <li>
                 <a
-                  href={`https://github.com/${records["com.github"]}`}
+                  href={`https://warpcast.com/${records["com.farcaster"]}`}
                   target="_blank"
                   rel="noreferrer"
+                  className="hover:underline"
                 >
-                  @{records["com.github"]}
+                  🌐 @{records["com.farcaster"]}
                 </a>
               </li>
             )}
-            {records?.["org.telegram"] && (
+            {records?.["com.lens"] && (
               <li>
                 <a
-                  href={`https://t.me/${records["org.telegram"]}`}
+                  href={`https://hey.xyz/u/${records["com.lens"]}`}
                   target="_blank"
                   rel="noreferrer"
+                  className="hover:underline"
                 >
-                  @{records["org.telegram"]}
+                  📸 @{records["com.lens"]}
                 </a>
               </li>
             )}
           </ul>
           {!(
             records?.["com.twitter"] ||
-            records?.["com.github"] ||
-            records?.["org.telegram"]
+            records?.["com.farcaster"] ||
+            records?.["com.lens"]
           ) && <p className="text-sm text-gray-500">No connected social handles.</p>}
         </div>
 
-        {/* EFP Data */}
+        {/* EFP Stats */}
         <div className="bg-white rounded-xl shadow-md p-4">
           <h4 className="text-lg font-semibold mb-3 text-gray-800">Ethereum Follow Protocol</h4>
           {efp?.followers !== undefined ? (
