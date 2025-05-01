@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Head from 'next/head';
 import FlipCardWithDetails from '../components/FlipCardWithDetails';
-import { getEnsData } from '../lib/ensUtils';
+import { getEnsData } from '../utils/ensUtils';
 
 export default function Home() {
   const [ensName, setEnsName] = useState('');
