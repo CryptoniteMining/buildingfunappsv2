@@ -8,10 +8,9 @@ export async function getEnsData(name) {
     throw new Error('Invalid ENS name');
   }
 
+  // Core ENS resolution
   const address = await provider.resolveName(name);
-  if (!address) {
-    throw new Error('Could not resolve ENS name');
-  }
+  if (!address) throw new Error('Could not resolve ENS name');
 
   const resolver = await provider.getResolver(name);
   const avatar = resolver ? await resolver.getText('avatar') : null;
@@ -19,22 +18,20 @@ export async function getEnsData(name) {
   const reverseName = await provider.lookupAddress(address);
   const isPrimary = reverseName?.toLowerCase() === name.toLowerCase();
 
-  // Add-on data
   let records = {};
   let socials = [];
   let efp = null;
   let poaps = [];
 
-  // Web3.bio enhancements
+  // 🧠 Attempt Web3.bio profile fetch
   try {
     const res = await fetch(`https://api.web3.bio/profile/${name}`);
     const json = await res.json();
 
-    console.log('Web3.bio full response →', json); // helpful for debugging
-
+    console.log('Web3.bio response:', res.status, json);
     const ens = json?.data?.ens_domain;
 
-    if (ens) {
+    if (res.ok && ens) {
       records = ens.records || {};
       socials = ens.identity?.socials || [];
 
@@ -44,23 +41,23 @@ export async function getEnsData(name) {
         followersList: ens.identity?.followersList || [],
         followingList: ens.identity?.followingList || [],
       };
-    }
-  } catch (error) {
-    console.warn('Web3.bio fetch failed:', error.message);
-  }
-
-  // POAPs
-  try {
-    const poapRes = await fetch(`https://public-api.poap.tech/actions/scan/${address}`, {
-      headers: {
-        'X-API-Key': 'demo',
-      }
-    });
-    if (poapRes.ok) {
-      poaps = await poapRes.json();
+    } else {
+      console.warn(`Web3.bio returned no data for ${name}`);
     }
   } catch (err) {
-    console.warn('Failed to fetch POAPs:', err.message);
+    console.warn('Web3.bio fetch failed:', err.message);
+  }
+
+  // 🧠 Try POAPs from public API
+  try {
+    const poapRes = await fetch(`https://public-api.poap.tech/actions/scan/${address}`);
+    if (poapRes.ok) {
+      poaps = await poapRes.json();
+    } else {
+      console.warn(`POAP fetch failed with status ${poapRes.status}`);
+    }
+  } catch (err) {
+    console.warn('POAP fetch failed:', err.message);
   }
 
   return {
