@@ -1,9 +1,19 @@
 import React, { useState } from 'react';
 import EFPGrid from './EFPGrid';
 import SocialCards from './SocialCards';
+import PoapGrid from './PoapGrid';
 
 export default function FlipCardWithDetails({ ensData }) {
-  const { name, address, avatar, isPrimary, records, efp, nfts } = ensData;
+  const {
+    name,
+    address,
+    avatar,
+    isPrimary,
+    records,
+    efp,
+    nfts,
+    poaps,
+  } = ensData;
   const [flipped, setFlipped] = useState(false);
 
   return (
@@ -12,11 +22,17 @@ export default function FlipCardWithDetails({ ensData }) {
       {/* Profile Header */}
       <div className="bg-white rounded-xl shadow-md p-6 text-center flex flex-col items-center">
         {avatar && (
-          <img src={avatar} alt="ENS Avatar" className="w-24 h-24 rounded-full border-4 border-purple-400 shadow-md mb-4" />
+          <img
+            src={avatar}
+            alt="ENS Avatar"
+            className="w-24 h-24 rounded-full border-4 border-purple-400 shadow-md mb-4"
+          />
         )}
         <h2 className="text-2xl font-bold text-gray-800">{name}</h2>
         {isPrimary && (
-          <p className="text-xs text-green-600 font-medium mt-1">✅ Primary Name</p>
+          <p className="text-xs text-green-600 font-medium mt-1">
+            ✅ Primary Name
+          </p>
         )}
         <p className="text-sm text-gray-500 mt-2 break-all">{address}</p>
       </div>
@@ -42,9 +58,13 @@ export default function FlipCardWithDetails({ ensData }) {
                 className="absolute inset-0 bg-white rounded-2xl shadow-xl flex flex-col justify-center items-center text-center px-4"
                 style={{ backfaceVisibility: 'hidden' }}
               >
-                <h3 className="text-lg font-semibold text-purple-600">ENS Name</h3>
+                <h3 className="text-lg font-semibold text-purple-600">
+                  ENS Name
+                </h3>
                 <p className="text-xl font-bold text-gray-800 mt-2">{name}</p>
-                <span className="text-xs text-gray-400 mt-4">Click to reveal wallet address</span>
+                <span className="text-xs text-gray-400 mt-4">
+                  Click to reveal wallet address
+                </span>
               </div>
 
               {/* Back */}
@@ -55,8 +75,12 @@ export default function FlipCardWithDetails({ ensData }) {
                   backfaceVisibility: 'hidden',
                 }}
               >
-                <h3 className="text-lg font-semibold text-purple-700">Address</h3>
-                <p className="text-sm break-words text-gray-700 mt-2">{address}</p>
+                <h3 className="text-lg font-semibold text-purple-700">
+                  Address
+                </h3>
+                <p className="text-sm break-words text-gray-700 mt-2">
+                  {address}
+                </p>
               </div>
             </div>
           </div>
@@ -64,11 +88,15 @@ export default function FlipCardWithDetails({ ensData }) {
 
         {/* ENS Records */}
         <div className="bg-white rounded-xl shadow-md p-4">
-          <h4 className="text-lg font-semibold mb-3 text-gray-800">ENS Records</h4>
+          <h4 className="text-lg font-semibold mb-3 text-gray-800">
+            ENS Records
+          </h4>
           {records && Object.keys(records).length > 0 ? (
             <ul className="text-sm text-gray-700 space-y-2">
               {Object.entries(records).map(([key, val]) => (
-                <li key={key}><strong>{key}:</strong> {val}</li>
+                <li key={key}>
+                  <strong>{key}:</strong> {val}
+                </li>
               ))}
             </ul>
           ) : (
@@ -77,15 +105,17 @@ export default function FlipCardWithDetails({ ensData }) {
         </div>
       </div>
 
-      {/* Social Cards */}
-      <SocialCards socials={{
-        twitter: records?.["com.twitter"],
-        github: records?.["com.github"],
-        telegram: records?.["org.telegram"],
-        farcaster: records?.["org.farcaster"],
-      }} />
+      {/* Social Media Cards */}
+      <SocialCards
+        socials={{
+          twitter: records?.['com.twitter'],
+          github: records?.['com.github'],
+          telegram: records?.['org.telegram'],
+          farcaster: records?.['org.farcaster'],
+        }}
+      />
 
-      {/* EFP Grid */}
+      {/* EFP Followers/Following Avatars */}
       <EFPGrid efp={efp} />
 
       {/* NFTs */}
@@ -107,11 +137,8 @@ export default function FlipCardWithDetails({ ensData }) {
         )}
       </div>
 
-      {/* POAPs Placeholder */}
-      <div className="bg-white rounded-xl shadow-md p-4 mt-4 text-center">
-        <h4 className="text-lg font-semibold mb-2 text-gray-800">POAPs</h4>
-        <p className="text-sm text-gray-500">POAPs display coming soon...</p>
-      </div>
+      {/* POAPs */}
+      <PoapGrid poaps={poaps} />
     </div>
   );
 }
