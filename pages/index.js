@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import FlipCard from '../components/FlipCard';
-import ProfileCard from '../components/ProfileCard';
+import Head from 'next/head';
+import FlipCardWithDetails from '../components/FlipCardWithDetails';
+import { getEnsData } from '../lib/ensUtils';
 
 export default function Home() {
   const [ensName, setEnsName] = useState('');
@@ -11,28 +12,8 @@ export default function Home() {
     try {
       setError('');
       setData(null);
-
-      const [ensRes, web3Res] = await Promise.all([
-        fetch(`/api/ens?name=${ensName}`),
-        fetch(`https://api.web3.bio/profile/${ensName}`),
-      ]);
-
-      const ensJson = await ensRes.json();
-      const web3Json = await web3Res.json();
-
-      if (!ensRes.ok) throw new Error(ensJson.error || 'Failed ENS fetch');
-
-      const mergedData = {
-        ...ensJson,
-        efp: web3Json?.data?.social?.efp || null,
-        socials: {
-          twitter: web3Json?.data?.social?.x?.handle || null,
-          farcaster: web3Json?.data?.social?.farcaster?.handle || null,
-          lens: web3Json?.data?.social?.lens?.handle || null,
-        },
-      };
-
-      setData(mergedData);
+      const result = await getEnsData(ensName);
+      setData(result);
     } catch (err) {
       setError(err.message);
     }
@@ -40,22 +21,28 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-gradient-to-b from-indigo-100 via-pink-100 to-yellow-100 font-sans text-gray-900 px-4">
-      <style jsx global>{`
-        body {
-          cursor: url('/cursor.svg'), auto;
-        }
-      `}</style>
+      <Head>
+        <title>lookup.xyz – Discover ENS Profiles</title>
+        <meta property="og:title" content="lookup.xyz – Discover ENS Profiles" />
+        <meta property="og:description" content="Search ENS names and view records, avatars, NFTs, POAPs, and followers." />
+        <meta property="og:image" content="https://lookup.xyz/opengraph.jpg" />
+        <meta property="og:url" content="https://lookup.xyz" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@wesdeth" />
+        <meta name="twitter:image" content="https://lookup.xyz/opengraph.jpg" />
+      </Head>
 
+      {/* Hero */}
       <header className="text-center py-12">
         <h1 className="text-6xl font-extrabold bg-gradient-to-r from-fuchsia-500 via-purple-500 to-rose-500 text-transparent bg-clip-text">
           lookup.xyz
         </h1>
         <p className="mt-3 text-sm text-gray-600">
-          Discover ENS profiles. Built by{' '}
-          <a href="https://twitter.com/wesdeth" className="underline">wesd.eth</a>
+          Discover ENS profiles. Built by <a href="https://twitter.com/wesdeth" className="underline">wesd.eth</a>
         </p>
       </header>
 
+      {/* ENS Search */}
       <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-xl mx-auto mb-10">
         <input
           type="text"
@@ -72,18 +59,19 @@ export default function Home() {
         </button>
       </div>
 
-      {error && <div className="text-red-600 text-center font-medium mb-4">{error}</div>}
-
-      {data && (
-        <section className="flex flex-col items-center gap-6 mt-4">
-          <ProfileCard ensData={data} />
-          <FlipCard ensData={data} />
-        </section>
+      {/* Error Display */}
+      {error && (
+        <div className="text-red-600 text-center font-medium mb-4">{error}</div>
       )}
 
+      {/* ENS Profile Details */}
+      {data && (
+        <FlipCardWithDetails ensData={data} />
+      )}
+
+      {/* Footer */}
       <footer className="text-center text-sm text-gray-500 mt-16 mb-6">
-        Like this tool? Donate to{' '}
-        <a href="https://app.ens.domains/name/wesd.eth" className="underline">wesd.eth</a>
+        Like this tool? Donate to <a href="https://app.ens.domains/name/wesd.eth" className="underline">wesd.eth</a>
       </footer>
     </main>
   );
