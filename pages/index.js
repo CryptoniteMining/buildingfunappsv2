@@ -25,10 +25,10 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-indigo-100 via-pink-100 to-yellow-100 font-sans text-gray-900 px-4 pb-16">
       <style jsx global>{`
-        body {
-          cursor: url('/cursor.svg'), auto;
-        }
-      `}</style>
+  body {
+    cursor: auto; // Removed SVG ref
+  }
+`}</style>
 
       {/* Header */}
       <header className="text-center py-12">
