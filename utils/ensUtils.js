@@ -4,11 +4,8 @@ const ALCHEMY_KEY = 'innCpgwBD8GBgVLWJV1cLq41vhob1He1';
 const provider = new ethers.JsonRpcProvider(`https://eth-mainnet.g.alchemy.com/v2/${ALCHEMY_KEY}`);
 
 export async function getEnsData(name) {
-  if (!name.endsWith('.eth')) {
-    throw new Error('Invalid ENS name');
-  }
+  if (!name.endsWith('.eth')) throw new Error('Invalid ENS name');
 
-  // Core ENS resolution
   const address = await provider.resolveName(name);
   if (!address) throw new Error('Could not resolve ENS name');
 
@@ -23,15 +20,13 @@ export async function getEnsData(name) {
   let efp = null;
   let poaps = [];
 
-  // 🧠 Attempt Web3.bio profile fetch
+  // ✅ Web3.bio fetch
   try {
     const res = await fetch(`https://api.web3.bio/profile/${name}`);
     const json = await res.json();
-
-    console.log('Web3.bio response:', res.status, json);
     const ens = json?.data?.ens_domain;
 
-    if (res.ok && ens) {
+    if (res.ok && ens && typeof ens === 'object') {
       records = ens.records || {};
       socials = ens.identity?.socials || [];
 
@@ -42,13 +37,13 @@ export async function getEnsData(name) {
         followingList: ens.identity?.followingList || [],
       };
     } else {
-      console.warn(`Web3.bio returned no data for ${name}`);
+      console.warn(`Web3.bio returned empty or invalid data for ${name}`);
     }
   } catch (err) {
     console.warn('Web3.bio fetch failed:', err.message);
   }
 
-  // 🧠 Try POAPs from public API
+  // ✅ POAP fetch
   try {
     const poapRes = await fetch(`https://public-api.poap.tech/actions/scan/${address}`);
     if (poapRes.ok) {
@@ -57,7 +52,7 @@ export async function getEnsData(name) {
       console.warn(`POAP fetch failed with status ${poapRes.status}`);
     }
   } catch (err) {
-    console.warn('POAP fetch failed:', err.message);
+    console.warn('POAP fetch error:', err.message);
   }
 
   return {
