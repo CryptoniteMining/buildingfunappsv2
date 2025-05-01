@@ -20,11 +20,16 @@ export default function FlipCard({ ensData }) {
           {/* Front */}
           <div
             className="absolute inset-0 bg-white rounded-lg shadow-md p-6 flex flex-col items-center justify-center"
-            style={{ backfaceVisibility: 'hidden' }}
+            style={{
+              backfaceVisibility: 'hidden',
+              WebkitBackfaceVisibility: 'hidden',
+            }}
           >
             <h3 className="text-lg font-bold text-purple-600 mb-2">ENS Name</h3>
             <p className="text-xl font-semibold">{ensData.name}</p>
-            <p className="text-sm text-gray-400 mt-1">Click to reveal wallet address</p>
+            <p className="text-sm text-gray-400 mt-1">
+              Click to reveal wallet address
+            </p>
           </div>
 
           {/* Back */}
@@ -33,10 +38,21 @@ export default function FlipCard({ ensData }) {
             style={{
               transform: 'rotateY(180deg)',
               backfaceVisibility: 'hidden',
+              WebkitBackfaceVisibility: 'hidden',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
             }}
           >
             <h3 className="text-lg font-bold text-gray-800 mb-2">Address</h3>
-            <p className="text-xs text-center text-gray-600 break-all">{ensData.address}</p>
+            <p className="text-xs text-center text-gray-600 break-all">
+              {ensData.address}
+            </p>
+            <p className="text-sm text-gray-400 mt-2">
+              Click to flip back
+            </p>
           </div>
         </div>
       </div>
